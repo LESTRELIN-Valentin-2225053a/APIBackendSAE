@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Completion extends Model
 {
-    protected $table= 'investigations';
+    protected $table= 'completion';
     protected $primaryKey = ['user_id', 'investigation_id'];
     public $incrementing = false;
 

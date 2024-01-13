@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SaveMediaPosition extends Model
 {
+    protected $table = 'save_media_position';
     protected $primaryKey = ['user_id', 'investigation_id', 'media_id'];
     public $incrementing = false;
 

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Media extends Model
 {
+    protected $table = 'media';
     protected $primaryKey = 'media_id';
     public $incrementing = true;
 

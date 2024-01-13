@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Investigation extends Model
 {
+    protected $table = 'investigations';
     protected $primaryKey = 'investigation_id';
     public $incrementing = true;
 
