@@ -10,31 +10,25 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Class Completion
+ * Class WebsitesUsedByInvestigation
  *
- * @property int $user_id
  * @property int $investigation_id
- * @property bool $completion
+ * @property int $website_id
  *
  * @property Investigation $investigation
- * @property User $user
+ * @property Website $website
  *
  * @package App\Models
  */
-class Completion extends Model
+class WebsitesUsedByInvestigation extends Model
 {
-	protected $table = 'completion';
+	protected $table = 'websites_used_by_investigation';
 	public $incrementing = false;
 	public $timestamps = false;
 
 	protected $casts = [
-		'user_id' => 'int',
 		'investigation_id' => 'int',
-		'completion' => 'bool'
-	];
-
-	protected $fillable = [
-		'completion'
+		'website_id' => 'int'
 	];
 
 	public function investigation(): BelongsTo
@@ -42,8 +36,8 @@ class Completion extends Model
 		return $this->belongsTo(Investigation::class);
 	}
 
-	public function user(): BelongsTo
+	public function website(): BelongsTo
     {
-		return $this->belongsTo(User::class);
+		return $this->belongsTo(Website::class);
 	}
 }

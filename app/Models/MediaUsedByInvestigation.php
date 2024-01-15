@@ -10,31 +10,34 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Class Completion
+ * Class MediaUsedByInvestigation
  *
- * @property int $user_id
  * @property int $investigation_id
- * @property bool $completion
+ * @property int $media_id
+ * @property float $defaultPosX
+ * @property float $defaultPosY
  *
  * @property Investigation $investigation
- * @property User $user
+ * @property Media $medium
  *
  * @package App\Models
  */
-class Completion extends Model
+class MediaUsedByInvestigation extends Model
 {
-	protected $table = 'completion';
+	protected $table = 'media_used_by_investigation';
 	public $incrementing = false;
 	public $timestamps = false;
 
 	protected $casts = [
-		'user_id' => 'int',
 		'investigation_id' => 'int',
-		'completion' => 'bool'
+		'media_id' => 'int',
+		'defaultPosX' => 'float',
+		'defaultPosY' => 'float'
 	];
 
 	protected $fillable = [
-		'completion'
+		'defaultPosX',
+		'defaultPosY'
 	];
 
 	public function investigation(): BelongsTo
@@ -42,8 +45,8 @@ class Completion extends Model
 		return $this->belongsTo(Investigation::class);
 	}
 
-	public function user(): BelongsTo
+	public function media(): BelongsTo
     {
-		return $this->belongsTo(User::class);
+		return $this->belongsTo(Media::class, 'media_id');
 	}
 }

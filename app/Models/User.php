@@ -1,61 +1,62 @@
 <?php
 
+/**
+ * Created by Reliese Model.
+ */
+
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-
-class User extends Authenticatable
+/**
+ * Class User
+ *
+ * @property int $user_id
+ * @property string $name
+ * @property string $email
+ * @property Carbon|null $email_verified_at
+ * @property string $password
+ * @property string|null $remember_token
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ *
+ * @property Collection|Completion[] $completions
+ * @property Collection|UserMediaPosition[] $user_media_positions
+ *
+ * @package App\Models
+ */
+class User extends Model
 {
-    use HasApiTokens, HasFactory, Notifiable;
+	protected $table = 'users';
+	protected $primaryKey = 'user_id';
 
-    protected $table='users';
+	protected $casts = [
+		'email_verified_at' => 'datetime'
+	];
 
-    protected $primaryKey = 'user_id';
+	protected $hidden = [
+		'password',
+		'remember_token'
+	];
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+	protected $fillable = [
+		'name',
+		'email',
+		'email_verified_at',
+		'password',
+		'remember_token'
+	];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-    ];
-
-    public function saveMediaPosition(): HasMany
+	public function completions(): HasMany
     {
-        return $this->hasMany(SaveMediaPosition::class, 'user_id', 'user_id');
-    }
+		return $this->hasMany(Completion::class);
+	}
 
-    public function completion(): HasMany
+	public function user_media_positions(): HasMany
     {
-        return $this->hasMany(Completion::class, 'user_id', 'user_id');
-    }
+		return $this->hasMany(UserMediaPosition::class);
+	}
 }
