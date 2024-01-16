@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Media;
-use App\Models\MediaUsedByInvestigation;
 use App\Models\UserMediaPosition;
 use Illuminate\Http\Request;
 
@@ -40,5 +39,35 @@ class MediaController extends Controller
             return response()->json($medias);
         else
             return response()->json(['message'=>'Media not found'],404);
+    }
+
+    public function updateMediaPositionOfUser(Request $request){
+        $userID = $request->input('user_id');
+        $invID = $request->input('investigation_id');
+        $mediaID = $request->input('media_id');
+        $PosX = $request->input('PosX');
+        $PosY = $request->input('PosY');
+        $possibleMediaPos = UserMediaPosition::query()->where('user_id', $userID)
+            ->where('investigation_id', $invID)
+            ->where('media_id', $mediaID)->first()->get();
+        if ($possibleMediaPos->isNotEmpty()){
+            UserMediaPosition::query()->where('user_id', $userID)
+                ->where('investigation_id', $invID)
+                ->where('media_id', $mediaID)->first()
+                ->update([
+                    'PosX'=> $PosX,
+                    'PosY'=> $PosY
+                ]);
+        }
+        else {
+            $newMediaPosUser = new UserMediaPosition();
+            $newMediaPosUser->user_id = $userID;
+            $newMediaPosUser->investigation_id = $invID;
+            $newMediaPosUser->media_id = $mediaID;
+            $newMediaPosUser->posX = $PosX;
+            $newMediaPosUser->posY = $PosY;
+            $newMediaPosUser->save();
+        }
+        return response()->json(['message'=>'Media position saved in user_media_position']);
     }
 }
