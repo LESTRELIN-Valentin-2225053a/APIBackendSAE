@@ -53,13 +53,17 @@ class InvestigationController extends Controller
             ->where('user_id', $userId)
             ->where('investigation_id', $invId)
             ->first();
-        //if (!$completion) {
-        //    return response()->json(['message' => 'Completion not found'], 404);
-        //} else {
-        //    $completion->update([
-        //        'completion' => true
-        //    ]);
-            return response()->json($completion);
-        //}
+        if (!$completion) {
+            return response()->json(['message' => 'Completion not found'], 404);
+        }
+        else {
+            $completion = Completion::query()
+                ->where('user_id', $userId)
+                ->where('investigation_id', $invId)
+                ->update([
+                    'completion' => true
+                ]);
+            return response()->json(['message' => 'Completion updated to true']);
+        }
     }
 }
