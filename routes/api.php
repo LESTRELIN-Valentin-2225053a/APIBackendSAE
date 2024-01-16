@@ -20,9 +20,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 //Routes d'authentification
 Route::controller(\App\Http\Controllers\AuthController::class)->group(function(){
-    Route::post('/register', 'register');
-    Route::post('/login', 'login');
-    Route::post('/logout', 'logout');
+    Route::post('/register', 'register')->name('register');
+    Route::post('/login', 'login')->name('login');
+    Route::post('/logout', 'logout')->name('logout');
 });
 
 //Routes des investigations + completions
@@ -37,7 +37,8 @@ Route::controller(\App\Http\Controllers\InvestigationController::class)->group(f
        Route::get('/{userId}/{investigationId}', 'getCompletionByUserIdAndInvId');
 
        //Save progession (update Completion table)
-       Route::put('/update/{userId}/{investigationId}', 'updateCompletionOfUser');
+       Route::middleware('auth:sanctum')
+           ->put('/saveProgress', 'updateCompletionOfUser');
     });
 });
 

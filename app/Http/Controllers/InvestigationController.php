@@ -45,16 +45,19 @@ class InvestigationController extends Controller
             return response()->json(['message'=>'Completion not found'],404);
     }
 
-    public function updateCompletionOfUser(string $invID, string $userId){
-        $completion =Completion::query()->where('user_id',$userId)
-            ->where('investigation_id', $invID);
-        if ($completion){
+    public function updateCompletionOfUser(Request $request){
+        $userId = $request->input('user_id');
+        $invId = $request->input('investigation_id');
+        $completion = Completion::query()->where('user_id',$userId)
+            ->where('investigation_id', $invId);
+        if (!$completion){
+            return response()->json(['message'=>'Completion not found'],404);
+        }
+        else {
             $completion->update([
                 'completion' => true
             ]);
-            return response()->json(['message'=>'Completion updated to true']);
+            return response()->json(['message'=>'Completion updated to true'],200);
         }
-        else
-            return response()->json(['message'=>'Completion not found'],404);
     }
 }
