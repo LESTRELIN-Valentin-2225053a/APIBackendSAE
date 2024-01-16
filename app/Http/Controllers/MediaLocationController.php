@@ -7,17 +7,11 @@ use Illuminate\Http\Request;
 
 class MediaLocationController extends Controller
 {
-    public function getAllMediaLocations(Request $request){
+    public function getAllMediaLocations(){
         return MediaLocation::all();
     }
 
-    public function getMediaLocationsByInvestigationId(Request $request){
-        $investigationID = $request->input('investigation_id');
+    public function getMediaLocationsByInvestigationId(string $investigationID){
         return MediaLocation::query()->where('investigation_id',$investigationID)->get();
-    }
-
-    //C'est pas la même les deux ?
-    public function getMediaLocationsByInvestigation(Request $request){
-
     }
 }

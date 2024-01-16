@@ -9,13 +9,12 @@ use Illuminate\Http\Request;
 class InvestigationController extends Controller
 {
     //AllInvestigation
-    public function getAllInvestigation(Request $request){
+    public function getAllInvestigation(){
         return Investigation::all();
     }
 
     //InvestigationById
-    public function getInvestigationById(Request $request){
-        $investigationID = $request->input('investigation_id');
+    public function getInvestigationById(string $investigationID){
         $investigation = Investigation::query()->find($investigationID);
         if ($investigation)
             return response()->json($investigation);
@@ -24,15 +23,12 @@ class InvestigationController extends Controller
     }
 
     //CompletionByUserID
-    public function getCompletionByUserId(Request $request){
-        $userID = $request->input('user_id');
-        return Completion::query()->where('user_id', $userID)->get();
+    public function getCompletionByUserId(string $userId){
+        return Completion::query()->where('user_id', $userId)->get();
     }
 
     //CompletionByInvestigationID+UserId
-    public function getCompletionByUserIdAndInvId(Request $request){
-        $userID = $request->input('user_id');
-        $InvID = $request->input('investigation_id');
+    public function getCompletionByUserIdAndInvId(string $userID, string $InvID){
         return Completion::query()->where('user_id', $userID)
             ->where('investigation_id','=',$InvID);
     }

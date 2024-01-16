@@ -24,19 +24,19 @@ Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
 Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout']);
 
 //Routes des investigations
-Route::post('/invetigationById', [\App\Http\Controllers\InvestigationController::class, 'getInvestigationById']);
-Route::post('/allInvestigation', [\App\Http\Controllers\InvestigationController::class, 'getAllInvestigation']);
+Route::get('/invetigationById/{investigationId}', [\App\Http\Controllers\InvestigationController::class, 'getInvestigationById']);
+Route::get('/allInvestigation', [\App\Http\Controllers\InvestigationController::class, 'getAllInvestigation']);
 
 //Routes Completion
-Route::post('/completionByUserId', [\App\Http\Controllers\InvestigationController::class, 'getCompletionByUserId']);
-Route::post('/completionByUserId+InvId', [\App\Http\Controllers\InvestigationController::class, 'getCompletionByUserIdAndInvId']);
+Route::get('/completionByUserId/{userId}', [\App\Http\Controllers\InvestigationController::class, 'getCompletionByUserId']);
+Route::get('/completionByUserId+InvId/{userId}/{investigationId}', [\App\Http\Controllers\InvestigationController::class, 'getCompletionByUserIdAndInvId']);
 
 //Route Media
-Route::post('/MediaByInvId', [\App\Http\Controllers\MediaController::class, 'getMediaByInvId']);
+Route::get('/MediaByInvId/{investigationId}', [\App\Http\Controllers\MediaController::class, 'getMediaByInvId']);
 
 //Route Website
-Route::post('/WebsiteByInvId', [\App\Http\Controllers\WebsiteController::class, 'getWebsiteByInvId']);
+Route::get('/WebsiteByInvId/{investigationId}', [\App\Http\Controllers\WebsiteController::class, 'getWebsiteByInvId']);
 
 //Route MediaLocation
-Route::post('/allMediaLoc', [\App\Http\Controllers\MediaLocationController::class, 'getAllMediaLocations']);
-Route::post('/MediaLocByInvId', [\App\Http\Controllers\MediaLocationController::class, 'getMediaLocationsByInvestigationId']);
+Route::get('/allMediaLoc', [\App\Http\Controllers\MediaLocationController::class, 'getAllMediaLocations']);
+Route::get('/MediaLocByInvId/{investigationId}', [\App\Http\Controllers\MediaLocationController::class, 'getMediaLocationsByInvestigationId']);
