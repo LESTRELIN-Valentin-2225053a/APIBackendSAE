@@ -33,6 +33,10 @@ class Investigation extends Model
 	protected $primaryKey = 'investigation_id';
 	public $timestamps = false;
 
+    protected $casts = [
+        'completion' => 'bool'
+    ];
+
 	protected $fillable = [
 		'title',
 		'description',

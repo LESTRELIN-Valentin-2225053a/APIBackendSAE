@@ -28,6 +28,7 @@ Route::controller(\App\Http\Controllers\AuthController::class)->group(function()
 //Routes des investigations + completions
 Route::controller(\App\Http\Controllers\InvestigationController::class)->group(function(){
     Route::prefix('investigation')->group(function (){
+        Route::get('/byUser/{userId}','getInvestigationsByUserId');
         Route::get('/id/{investigationId}', 'getInvestigationById');
         Route::get('/all', 'getAllInvestigation');
     });

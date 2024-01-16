@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Completion;
 use App\Models\Investigation;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class InvestigationController extends Controller
@@ -24,6 +25,18 @@ class InvestigationController extends Controller
             return response()->json($investigation);
         else
             return response()->json(['message'=>'Investigation not found'],404);
+    }
+
+    //InvestigationByUserId
+    public function getInvestigationsByUserId(string $userID){
+        $investigations = Investigation::query()->join('completion', 'investigations.investigation_id','=','completion.investigation_id')
+            ->where('completion.user_id',$userID)
+            ->select('investigations.*','completion.completion')
+            ->get();
+        if ($investigations)
+            return response()->json($investigations);
+        else
+            return response()->json(['message'=>'Investigations not found'],404);
     }
 
     //CompletionByUserID
