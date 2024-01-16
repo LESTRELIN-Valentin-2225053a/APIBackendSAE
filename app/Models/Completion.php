@@ -37,7 +37,7 @@ class Completion extends Model
 		'completion'
 	];
 
-	public function investigation(): BelongsTo
+    public function investigation(): BelongsTo
     {
 		return $this->belongsTo(Investigation::class);
 	}
