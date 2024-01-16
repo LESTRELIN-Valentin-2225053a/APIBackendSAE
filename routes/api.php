@@ -47,6 +47,7 @@ Route::controller(\App\Http\Controllers\InvestigationController::class)->group(f
 Route::controller(\App\Http\Controllers\MediaController::class)->group(function(){
     Route::prefix('media')->group(function (){
        Route::get('/{investigationId}', 'getMediaByInvId');
+       Route::get('/byUser/{userId}/{investigationID}','getMediasByInvAndUserId');
     });
 });
 
@@ -62,5 +63,6 @@ Route::controller(\App\Http\Controllers\MediaLocationController::class)->group(f
     Route::prefix('mediaLocation')->group(function (){
         Route::get('/all', 'getAllMediaLocations');
         Route::get('/id/{investigationId}', 'getMediaLocationsByInvestigationId');
+        Route::get('/byUser/{userID}/{investigationID}','getMediaLocationsByInvestigationIdAndUserId');
     });
 });
