@@ -28,7 +28,7 @@ Route::controller(\App\Http\Controllers\AuthController::class)->group(function()
 //Routes des investigations + completions
 Route::controller(\App\Http\Controllers\InvestigationController::class)->group(function(){
     Route::prefix('investigation')->group(function (){
-        Route::get('/{investigationId}', 'getInvestigationById');
+        Route::get('/id/{investigationId}', 'getInvestigationById');
         Route::get('/all', 'getAllInvestigation');
     });
 
@@ -60,6 +60,6 @@ Route::controller(\App\Http\Controllers\WebsiteController::class)->group(functio
 Route::controller(\App\Http\Controllers\MediaLocationController::class)->group(function(){
     Route::prefix('mediaLocation')->group(function (){
         Route::get('/all', 'getAllMediaLocations');
-        Route::get('/{investigationId}', 'getMediaLocationsByInvestigationId');
+        Route::get('/id/{investigationId}', 'getMediaLocationsByInvestigationId');
     });
 });

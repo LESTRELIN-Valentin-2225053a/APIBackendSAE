@@ -9,7 +9,7 @@ class MediaLocationController extends Controller
 {
     public function getAllMediaLocations(){
         $mediaLocation = MediaLocation::all();
-        if ($mediaLocation)
+        if ($mediaLocation->isNotEmpty())
             return response()->json($mediaLocation);
         else
             return response()->json(['message'=>'No mediaLocations'],404);
@@ -17,7 +17,7 @@ class MediaLocationController extends Controller
 
     public function getMediaLocationsByInvestigationId(string $investigationID){
         $mediaLocation = MediaLocation::query()->where('investigation_id',$investigationID)->get();
-        if ($mediaLocation)
+        if ($mediaLocation->isNotEmpty())
             return response()->json($mediaLocation);
         else
             return response()->json(['message'=>'MediaLocation not found'],404);
