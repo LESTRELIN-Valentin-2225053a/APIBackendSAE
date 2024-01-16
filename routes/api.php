@@ -19,24 +19,46 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 //Routes d'authentification
-Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
-Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
-Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout']);
+Route::controller(\App\Http\Controllers\AuthController::class)->group(function(){
+    Route::post('/register', 'register');
+    Route::post('/login', 'login');
+    Route::post('/logout', 'logout');
+});
 
-//Routes des investigations
-Route::get('/invetigationById/{investigationId}', [\App\Http\Controllers\InvestigationController::class, 'getInvestigationById']);
-Route::get('/allInvestigation', [\App\Http\Controllers\InvestigationController::class, 'getAllInvestigation']);
+//Routes des investigations + completions
+Route::controller(\App\Http\Controllers\InvestigationController::class)->group(function(){
+    Route::prefix('investigation')->group(function (){
+        Route::get('/{investigationId}', 'getInvestigationById');
+        Route::get('/all', 'getAllInvestigation');
+    });
 
-//Routes Completion
-Route::get('/completionByUserId/{userId}', [\App\Http\Controllers\InvestigationController::class, 'getCompletionByUserId']);
-Route::get('/completionByUserId+InvId/{userId}/{investigationId}', [\App\Http\Controllers\InvestigationController::class, 'getCompletionByUserIdAndInvId']);
+    Route::prefix('completion')->group(function (){
+       Route::get('/{userId}', 'getCompletionByUserId');
+       Route::get('/{userId}/{investigationId}', 'getCompletionByUserIdAndInvId');
+
+       //Save progession (update Completion table)
+       Route::put('/update/{userId}/{investigationId}', 'updateCompletionOfUser');
+    });
+});
 
 //Route Media
-Route::get('/MediaByInvId/{investigationId}', [\App\Http\Controllers\MediaController::class, 'getMediaByInvId']);
+Route::controller(\App\Http\Controllers\MediaController::class)->group(function(){
+    Route::prefix('media')->group(function (){
+       Route::get('/{investigationId}', 'getMediaByInvId');
+    });
+});
 
 //Route Website
-Route::get('/WebsiteByInvId/{investigationId}', [\App\Http\Controllers\WebsiteController::class, 'getWebsiteByInvId']);
+Route::controller(\App\Http\Controllers\WebsiteController::class)->group(function(){
+    Route::prefix('website')->group(function (){
+        Route::get('/{investigationId}','getWebsiteByInvId');
+    });
+});
 
 //Route MediaLocation
-Route::get('/allMediaLoc', [\App\Http\Controllers\MediaLocationController::class, 'getAllMediaLocations']);
-Route::get('/MediaLocByInvId/{investigationId}', [\App\Http\Controllers\MediaLocationController::class, 'getMediaLocationsByInvestigationId']);
+Route::controller(\App\Http\Controllers\MediaLocationController::class)->group(function(){
+    Route::prefix('mediaLocation')->group(function (){
+        Route::get('/all', 'getAllMediaLocations');
+        Route::get('/{investigationId}', 'getMediaLocationsByInvestigationId');
+    });
+});

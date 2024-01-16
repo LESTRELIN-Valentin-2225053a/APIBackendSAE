@@ -10,7 +10,11 @@ class InvestigationController extends Controller
 {
     //AllInvestigation
     public function getAllInvestigation(){
-        return Investigation::all();
+        $investigation = Investigation::all();
+        if ($investigation)
+            return response()->json($investigation);
+        else
+            return response()->json(['message'=>'No investigations'],404);
     }
 
     //InvestigationById
@@ -24,12 +28,33 @@ class InvestigationController extends Controller
 
     //CompletionByUserID
     public function getCompletionByUserId(string $userId){
-        return Completion::query()->where('user_id', $userId)->get();
+        $completion = Completion::query()->where('user_id', $userId)->get();
+        if ($completion)
+            return response()->json($completion);
+        else
+            return response()->json(['message'=>'Completion not found'],404);
     }
 
     //CompletionByInvestigationID+UserId
     public function getCompletionByUserIdAndInvId(string $userID, string $InvID){
-        return Completion::query()->where('user_id', $userID)
-            ->where('investigation_id','=',$InvID);
+        $completion = Completion::query()->where('user_id', $userID)
+            ->where('investigation_id',$InvID);
+        if ($completion)
+            return response()->json($completion);
+        else
+            return response()->json(['message'=>'Completion not found'],404);
+    }
+
+    public function updateCompletionOfUser(string $invID, string $userId){
+        $completion =Completion::query()->where('user_id',$userId)
+            ->where('investigation_id', $invID);
+        if ($completion){
+            $completion->update([
+                'completion' => true
+            ]);
+            return response()->json(['message'=>'Completion updated to true']);
+        }
+        else
+            return response()->json(['message'=>'Completion not found'],404);
     }
 }

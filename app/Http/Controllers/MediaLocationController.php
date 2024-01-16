@@ -8,10 +8,18 @@ use Illuminate\Http\Request;
 class MediaLocationController extends Controller
 {
     public function getAllMediaLocations(){
-        return MediaLocation::all();
+        $mediaLocation = MediaLocation::all();
+        if ($mediaLocation)
+            return response()->json($mediaLocation);
+        else
+            return response()->json(['message'=>'No mediaLocations'],404);
     }
 
     public function getMediaLocationsByInvestigationId(string $investigationID){
-        return MediaLocation::query()->where('investigation_id',$investigationID)->get();
+        $mediaLocation = MediaLocation::query()->where('investigation_id',$investigationID)->get();
+        if ($mediaLocation)
+            return response()->json($mediaLocation);
+        else
+            return response()->json(['message'=>'MediaLocation not found'],404);
     }
 }
