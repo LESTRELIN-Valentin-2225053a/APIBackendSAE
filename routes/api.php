@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\InvestigationController;
+use App\Http\Controllers\MediaController;
+use App\Http\Controllers\MediaLocationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,12 +28,38 @@ Route::controller(\App\Http\Controllers\AuthController::class)->group(function()
     Route::post('/logout', 'logout')->name('logout');
 });
 
-//Routes des investigations + completions
-Route::controller(\App\Http\Controllers\InvestigationController::class)->group(function(){
+Route::prefix('guest')->group(function (){
     Route::prefix('investigation')->group(function (){
-        Route::get('/byUser/{userId}','getInvestigationsByUserId');
-        Route::get('/id/{investigationId}', 'getInvestigationById');
-        Route::get('/all', 'getAllInvestigation');
+        Route::controller(InvestigationController::class)->group(function() {
+            Route::get('/all', 'getAllInvestigations');
+            Route::prefix('{investigationId}')->group(function () {
+                Route::get('', 'getInvestigationById');
+                Route::get('/medias', [MediaController::class,'getMediaByInvId']);
+                Route::get('/mediaLocations', [MediaLocationController::class,'getMediaLocationsByInvestigationId']);
+            });
+        });
+    });
+});
+
+Route::prefix('{userID}')->group(function (){
+    Route::prefix('investigation')->group(function (){
+        Route::controller(InvestigationController::class)->group(function() {
+            Route::get('/all', 'getAllInvestigationsByUserId');
+            Route::prefix('{investigationID}')->group(function () {
+                Route::get('', 'getInvestigationByIdAndUserId');
+                Route::get('/medias', [MediaController::class,'getMediasByInvAndUserId']);
+                Route::get('/mediaLocations', [MediaLocationController::class,'getMediaLocationsByInvestigationIdAndUserId']);
+            });
+        });
+    });
+});
+
+//Routes des investigations + completions
+Route::controller(InvestigationController::class)->group(function(){
+    Route::prefix('investigation')->group(function (){
+        Route::get('/all', 'getAllInvestigations');
+        Route::get('/{investigationId}', 'getInvestigationById');
+//      Route::get('/byUser/{userId}','getInvestigationsByUserId');
     });
 
     Route::prefix('completion')->group(function (){
@@ -44,7 +73,7 @@ Route::controller(\App\Http\Controllers\InvestigationController::class)->group(f
 });
 
 //Route Media
-Route::controller(\App\Http\Controllers\MediaController::class)->group(function(){
+Route::controller(MediaController::class)->group(function(){
     Route::prefix('media')->group(function (){
        Route::get('/{investigationId}', 'getMediaByInvId');
        Route::middleware('auth:sanctum')
