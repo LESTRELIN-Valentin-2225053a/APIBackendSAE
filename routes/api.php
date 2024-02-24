@@ -99,3 +99,55 @@ Route::controller(\App\Http\Controllers\MediaLocationController::class)->group(f
             ->get('/byUser/{userID}/{investigationID}','getMediaLocationsByInvestigationIdAndUserId');
     });
 });
+
+//Route Administration
+Route::controller(\App\Http\Controllers\AdminController::class)->group(function() {
+    Route::prefix('admin')->group(function (){
+        Route::middleware('auth:sanctum')
+            ->get('/checkIsAdmin', 'checkAdminStatus');
+        //Route administration Investigation
+        Route::prefix('investigation')->group(function (){
+            Route::middleware('auth:sanctum')
+                ->post('/new', 'addNewInvestigation');
+            Route::middleware('auth:sanctum')
+                ->put('/update/{investigationID}', 'updateInvestigation');
+            Route::middleware('auth:sanctum')
+                ->put('/{investigationID}/removeWebsite/{websiteID}', 'removeWebsiteFromInvestigation');
+            Route::middleware('auth:sanctum')
+                ->put('/{investigationID}/removeMedia/{mediaID}', 'removeMediaFromInvestigation');
+        });
+        //Route administration Website
+        Route::prefix('website')->group(function (){
+            Route::middleware('auth:sanctum')
+                ->post('/new', 'addWebsite');
+            Route::middleware('auth:sanctum')
+                ->put('{websiteId}/link/{investigationID}', 'linkWebsiteToInvestigation');
+            Route::middleware('auth:sanctum')
+                ->post('/newAndLink/{investigationID}', 'addWebsiteToInvestigation');
+            Route::middleware('auth:sanctum')
+                ->delete('/delete/{websiteID}', 'deleteWebsite');
+        });
+        //Route administration Media
+        Route::prefix('media')->group(function (){
+            Route::middleware('auth:sanctum')
+                ->post('/new', 'addMedia');
+            Route::middleware('auth:sanctum')
+                ->put('{mediaId}/link/{investigationID}', 'linkMediaToInvestigation');
+            Route::middleware('auth:sanctum')
+                ->post('/newAndLink/{investigationID}', 'addMediaToInvestigation');
+            Route::middleware('auth:sanctum')
+                ->delete('/delete/{mediaID}', 'deleteMedia');
+        });
+        //Route administration User
+        Route::prefix('user')->group(function (){
+            Route::middleware('auth:sanctum')
+                ->put('/block/{userID}', 'blockUser');
+            Route::middleware('auth:sanctum')
+                ->put('/unblock/{userID}', 'unblockUser');
+            Route::middleware('auth:sanctum')
+                ->put('/delete/{userID}', 'deleteUser');
+            Route::middleware('auth:sanctum')
+                ->put('/promote/{userID}', 'promoteUser');
+        });
+    });
+});

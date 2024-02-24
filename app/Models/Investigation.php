@@ -40,6 +40,7 @@ class Investigation extends Model
 	protected $fillable = [
 		'title',
 		'description',
+        'explication',
 		'board_type'
 	];
 
@@ -65,6 +66,6 @@ class Investigation extends Model
 
 	public function websites(): BelongsToMany
     {
-		return $this->belongsToMany(Website::class, 'websites_used_by_investigation');
+		return $this->belongsToMany(Website::class, 'websites_used_by_investigation', 'investigation_id', 'website_id');
 	}
 }

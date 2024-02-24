@@ -35,7 +35,7 @@ class MediaLocationController extends Controller
             })
             ->leftJoin('media','media.media_id','=','user_media_id')
             ->where('investigation_id',$investigationID)
-            ->select('id','expected_media_id','media_locations.description','x','y','media.*')
+            ->select('id','expected_media_id','media_locations.description as location_description','x','y','media.*')
             ->get();
         if ($mediaLocations)
             return response()->json($mediaLocations);

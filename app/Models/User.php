@@ -31,7 +31,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  */
 class User extends Authenticatable
 {
-	protected $table = 'users';
+    protected $table = 'users';
 	protected $primaryKey = 'user_id';
 
 	protected $casts = [
@@ -40,7 +40,9 @@ class User extends Authenticatable
 
 	protected $hidden = [
 		'password',
-		'remember_token'
+		'remember_token',
+        'admin',
+        'blocked'
 	];
 
 	protected $fillable = [
@@ -51,6 +53,11 @@ class User extends Authenticatable
 		'remember_token'
 	];
 
+    public function isAdmin(): bool
+    {
+        return $this->admin;
+    }
+
 	public function completions(): HasMany
     {
 		return $this->hasMany(Completion::class);
@@ -60,4 +67,22 @@ class User extends Authenticatable
     {
 		return $this->hasMany(UserMediaPosition::class);
 	}
+
+    public function block(): void
+    {
+        $this->blocked = true;
+        $this->save();
+    }
+
+    public function unblock(): void
+    {
+        $this->blocked = false;
+        $this->save();
+    }
+
+    public function promote(): void
+    {
+        $this->admin = true;
+        $this->save();
+    }
 }
