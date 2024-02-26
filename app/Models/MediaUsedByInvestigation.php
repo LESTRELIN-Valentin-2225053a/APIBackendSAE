@@ -36,6 +36,8 @@ class MediaUsedByInvestigation extends Model
 	];
 
 	protected $fillable = [
+        'investigation_id',
+        'media_id',
 		'defaultPosX',
 		'defaultPosY'
 	];

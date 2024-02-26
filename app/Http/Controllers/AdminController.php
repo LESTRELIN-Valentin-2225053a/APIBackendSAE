@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Investigation;
 use App\Models\Media;
+use App\Models\MediaUsedByInvestigation;
 use App\Models\User;
 use App\Models\Website;
+use App\Sevices\MediaUploader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -47,7 +49,42 @@ class AdminController extends Controller
     }
 
     public function updateInvestigation(Request $request, string $investigationID){
-        //TODO
+        if ($this->checkAdminStatus()->getStatusCode() == 204) {
+            $request->validate([
+                'title' => 'required',
+                'description' => 'required',
+                'explication' => 'required',
+                'board_type' => 'required',
+            ]);
+            $investigation = Investigation::find($investigationID);
+            if ($investigation) {
+                $investigation->update([
+                    'title' => $request->input('title'),
+                    'description' => $request->input('description'),
+                    'board_type' => $request->input('board_type'),
+                    'explication' => $request->input('explication'),
+                ]);
+                return response()->json($investigation, 201);
+            } else {
+                return response()->json(['message'=>'Investigation not found'],404);
+            }
+        } else {
+            return response()->json(['message'=>'User not admin, unauthorized'],401);
+        }
+    }
+
+    public function deleteInvestigation(string $investigationID){
+        if ($this->checkAdminStatus()->getStatusCode() == 204) {
+            $investigation = Investigation::find($investigationID);
+            if ($investigation) {
+                $investigation->delete();
+                return response()->json($investigation, 201);
+            } else {
+                return response()->json(['message'=>'Investigation not found'],404);
+            }
+        } else {
+            return response()->json(['message'=>'User not admin, unauthorized'],401);
+        }
     }
 
     //Partie Website
@@ -58,10 +95,11 @@ class AdminController extends Controller
                 'link' => 'required',
                 'icon' => 'required',
             ]);
+            $icon = MediaUploader::uploadMedia($request->file('icon')->getRealPath(), 'image');
             $website = Website::create([
                 'title' => $request->input('title'),
                 'link' => $request->input('link'),
-                'icon' => $request->input('icon'),
+                'icon' => $icon
             ]);
             $investigation = Investigation::find($investigationID);
             if ($investigation) {
@@ -82,10 +120,11 @@ class AdminController extends Controller
                 'link' => 'required',
                 'icon' => 'required',
             ]);
+            $icon = MediaUploader::uploadMedia($request->file('icon')->getRealPath(), 'image');
             $website = Website::create([
                 'title' => $request->input('title'),
                 'link' => $request->input('link'),
-                'icon' => $request->input('icon'),
+                'icon' => $icon
             ]);
             return response()->json($website, 201);
         } else {
@@ -102,6 +141,30 @@ class AdminController extends Controller
                 return response()->json($website, 201);
             } else {
                 return response()->json(['message'=>'Website or investigation not found'],404);
+            }
+        } else {
+            return response()->json(['message'=>'User not admin, unauthorized'],401);
+        }
+    }
+
+    public function updateWebsite(Request $request, string $websiteID){
+        if ($this->checkAdminStatus()->getStatusCode() == 204) {
+            $request->validate([
+                'title' => 'required',
+                'link' => 'required',
+                'icon' => 'required',
+            ]);
+            $website = Website::find($websiteID);
+            if ($website) {
+                $icon = MediaUploader::uploadMedia($request->file('icon')->getRealPath(), 'image');
+                $website->update([
+                    'title' => $request->input('title'),
+                    'link' => $request->input('link'),
+                    'icon' => $icon
+                ]);
+                return response()->json($website, 201);
+            } else {
+                return response()->json(['message'=>'Website not found'],404);
             }
         } else {
             return response()->json(['message'=>'User not admin, unauthorized'],401);
@@ -139,7 +202,50 @@ class AdminController extends Controller
 
     //Partie Media
     public function addMediaToInvestigation(Request $request, string $investigationID){
-        //TODO
+        if ($this->checkAdminStatus()->getStatusCode() == 204) {
+            $request->validate([
+                'description' => 'required',
+                'isTrustworthy' => 'required',
+                'type' => 'required',
+                'picture' => 'required',
+                'link' => 'required'
+            ]);
+            $picture = MediaUploader::uploadMedia($request->file('picture')->getRealPath(), 'image');
+            if($request->input('type') == 'img'){
+                $media = MediaUploader::uploadMedia($request->file('link')->getRealPath(), 'image');
+            }
+            elseif ($request->input('type') == 'video'){
+                $media = MediaUploader::uploadMedia($request->file('link'), 'video');
+            }
+            else {
+                return response()->json(['message'=>'Type not supported'],400);
+            }
+            if(isset($media) && isset($picture)){
+                $newMedia = Media::create([
+                    'description' => $request->input('description'),
+                    'isTrustworthy' => $request->input('isTrustworthy'),
+                    'type' => $request->input('type'),
+                    'link' => $media,
+                    'picture' => $picture
+                ]);
+                $investigation = Investigation::find($investigationID);
+                if ($investigation) {
+                    $investigation->media_used_by_investigations()->create([
+                        'media_id' => $newMedia->media_id,
+                        'defaultPosX' => 0,
+                        'defaultPosY' => 0
+                    ]);
+                    return response()->json($newMedia, 201);
+                } else {
+                    return response()->json(['message'=>'Investigation not found'],404);
+                }
+            } else {
+                return response()->json(['message'=>'Error while uploading media'],400);
+            }
+        }
+        else {
+            return response()->json(['message'=>'User not admin, unauthorized'],401);
+        }
     }
 
     public function addMedia(Request $request){
@@ -148,29 +254,110 @@ class AdminController extends Controller
                 'description' => 'required',
                 'isTrustworthy' => 'required',
                 'type' => 'required',
-                'link' => 'required',
-                'picture' => 'required'
+                'picture' => 'required',
+                'link' => 'required'
             ]);
-
-            $media = Media::create([
-                'description' => $request->input('description'),
-                'isTrustworthy' => $request->input('isTrustworthy'),
-                'type' => $request->input('type'),
-                'link' => $request->input('link'),
-                'picture' => $request->input('picture')
-            ]);
-            return response()->json($media, 201);
+            $picture = MediaUploader::uploadMedia($request->file('picture')->getRealPath(), 'image');
+            if($request->input('type') == 'img'){
+                $media = MediaUploader::uploadMedia($request->file('link')->getRealPath(), 'image');
+            }
+            elseif ($request->input('type') == 'video'){
+                $media = MediaUploader::uploadMedia($request->file('link'), 'video');
+            }
+            else {
+                return response()->json(['message'=>'Type not supported'],400);
+            }
+            if(isset($media) && isset($picture)){
+                $newMedia = Media::create([
+                    'description' => $request->input('description'),
+                    'isTrustworthy' => $request->input('isTrustworthy'),
+                    'type' => $request->input('type'),
+                    'link' => $media,
+                    'picture' => $picture
+                ]);
+                return response()->json($newMedia, 201);
+            } else {
+                return response()->json(['message'=>'Error while uploading media'],400);
+            }
         } else {
             return response()->json(['message'=>'User not admin, unauthorized'],401);
         }
     }
 
-    public function linkMediaToInvestigation(string $mediaID, string $investigationID){
-        //TODO
+    public function linkMediaToInvestigation(string $mediaID, string $investigationID, Request $request){
+        if($this->checkAdminStatus()->getStatusCode() == 204){
+            $media = Media::find($mediaID);
+            $investigation = Investigation::find($investigationID);
+            $request->validate([
+                'PosX' => 'required',
+                'PosY' => 'required'
+            ]);
+            if ($media && $investigation) {
+                $investigation->media_used_by_investigations()->create([
+                    'media_id' => $media->media_id,
+                    'defaultPosX' => $request->input('PosX'),
+                    'defaultPosY' => $request->input('PosY')
+                ]);
+                return response()->json(['message'=>'Success'], 201);
+            } else {
+                return response()->json(['message'=>'Media or investigation not found'],404);
+            }
+        } else {
+            return response()->json(['message'=>'User not admin, unauthorized'],401);
+        }
     }
 
     public function removeMediaFromInvestigation(string $investigationID, string $mediaID){
-        //TODO
+        if ($this->checkAdminStatus()->getStatusCode() == 204) {
+            $media = Media::find($mediaID);
+            $investigation = Investigation::find($investigationID);
+            if ($media && $investigation) {
+                $investigation->media_used_by_investigations()->where('media_id', $mediaID)->delete();
+                return response()->json(['message'=>'Success'], 201);
+            }
+            else {
+                return response()->json(['message'=>'Media not found in investigation'],404);
+            }
+        } else {
+            return response()->json(['message'=>'User not admin, unauthorized'],401);
+        }
+    }
+
+    public function updateMedia(Request $request, string $mediaID){
+        if ($this->checkAdminStatus()->getStatusCode() == 204) {
+            $request->validate([
+                'description' => 'required',
+                'isTrustworthy' => 'required',
+                'type' => 'required',
+                'picture' => 'required',
+                'link' => 'required'
+            ]);
+            $media = Media::find($mediaID);
+            if ($media) {
+                $picture = MediaUploader::uploadMedia($request->file('picture')->getRealPath(), 'image');
+                if($request->input('type') == 'img'){
+                    $mediaLink = MediaUploader::uploadMedia($request->file('link')->getRealPath(), 'image');
+                }
+                elseif ($request->input('type') == 'video'){
+                    $mediaLink = MediaUploader::uploadMedia($request->file('link'), 'video');
+                }
+                else {
+                    return response()->json(['message'=>'Type not supported'],400);
+                }
+                $media->update([
+                    'description' => $request->input('description'),
+                    'isTrustworthy' => $request->input('isTrustworthy'),
+                    'type' => $request->input('type'),
+                    'link' => $mediaLink,
+                    'picture' => $picture
+                ]);
+                return response()->json($media, 201);
+            } else {
+                return response()->json(['message'=>'Media not found'],404);
+            }
+        } else {
+            return response()->json(['message'=>'User not admin, unauthorized'],401);
+        }
     }
 
     public function deleteMedia(string $mediaID){

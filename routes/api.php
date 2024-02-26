@@ -112,6 +112,8 @@ Route::controller(\App\Http\Controllers\AdminController::class)->group(function(
             Route::middleware('auth:sanctum')
                 ->put('/update/{investigationID}', 'updateInvestigation');
             Route::middleware('auth:sanctum')
+                ->delete('/delete/{investigationID}', 'deleteInvestigation');
+            Route::middleware('auth:sanctum')
                 ->put('/{investigationID}/removeWebsite/{websiteID}', 'removeWebsiteFromInvestigation');
             Route::middleware('auth:sanctum')
                 ->put('/{investigationID}/removeMedia/{mediaID}', 'removeMediaFromInvestigation');
@@ -126,6 +128,8 @@ Route::controller(\App\Http\Controllers\AdminController::class)->group(function(
                 ->post('/newAndLink/{investigationID}', 'addWebsiteToInvestigation');
             Route::middleware('auth:sanctum')
                 ->delete('/delete/{websiteID}', 'deleteWebsite');
+            Route::middleware('auth:sanctum')
+                ->put('/update/{websiteID}', 'updateWebsite');
         });
         //Route administration Media
         Route::prefix('media')->group(function (){
@@ -137,6 +141,8 @@ Route::controller(\App\Http\Controllers\AdminController::class)->group(function(
                 ->post('/newAndLink/{investigationID}', 'addMediaToInvestigation');
             Route::middleware('auth:sanctum')
                 ->delete('/delete/{mediaID}', 'deleteMedia');
+            Route::middleware('auth:sanctum')
+                ->put('/update/{mediaID}', 'updateMedia');
         });
         //Route administration User
         Route::prefix('user')->group(function (){

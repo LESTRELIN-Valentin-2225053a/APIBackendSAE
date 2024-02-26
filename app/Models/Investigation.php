@@ -56,7 +56,7 @@ class Investigation extends Model
 
 	public function media_used_by_investigations(): HasMany
     {
-		return $this->hasMany(MediaUsedByInvestigation::class);
+		return $this->hasMany(MediaUsedByInvestigation::class, 'investigation_id');
 	}
 
 	public function user_media_positions(): HasMany
