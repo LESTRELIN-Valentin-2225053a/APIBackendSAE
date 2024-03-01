@@ -41,8 +41,6 @@ class User extends Authenticatable
 	protected $hidden = [
 		'password',
 		'remember_token',
-        'admin',
-        'blocked'
 	];
 
 	protected $fillable = [
@@ -50,7 +48,9 @@ class User extends Authenticatable
 		'email',
 		'email_verified_at',
 		'password',
-		'remember_token'
+		'remember_token',
+        'admin',
+        'blocked'
 	];
 
     public function isAdmin(): bool

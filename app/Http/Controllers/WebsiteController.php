@@ -17,4 +17,20 @@ class WebsiteController extends Controller
         else
             return response()->json(['message'=>'Media not found'],404);
     }
+
+    public function getAllWebsites(){
+        $websites = Website::all();
+        if ($websites->isNotEmpty())
+            return response()->json($websites);
+        else
+            return response()->json(['message'=>'Websites not found'],404);
+    }
+
+    public function getWebsiteById(string $websiteID){
+        $website = Website::find($websiteID);
+        if ($website)
+            return response()->json($website);
+        else
+            return response()->json(['message'=>'Website not found'],404);
+    }
 }

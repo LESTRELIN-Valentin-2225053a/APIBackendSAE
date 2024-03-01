@@ -78,4 +78,20 @@ class MediaController extends Controller
         }
         return response()->json(['message'=>'Media position saved in user_media_position']);
     }
+
+    public function getAllMedias(){
+        $medias = Media::all();
+        if ($medias->isNotEmpty())
+            return response()->json($medias);
+        else
+            return response()->json(['message'=>'Medias not found'],404);
+    }
+
+    public function getMediaById(string $mediaID){
+        $media = Media::find($mediaID);
+        if ($media)
+            return response()->json($media);
+        else
+            return response()->json(['message'=>'Media not found'],404);
+    }
 }

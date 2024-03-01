@@ -42,4 +42,12 @@ class MediaLocationController extends Controller
         else
             return response()->json(['message'=>'MediaLocation not found'],404);
     }
+
+    public function getMediaLocationById(string $mediaLocationID){
+        $mediaLocation = MediaLocation::find($mediaLocationID);
+        if ($mediaLocation)
+            return response()->json($mediaLocation);
+        else
+            return response()->json(['message'=>'MediaLocation not found'],404);
+    }
 }

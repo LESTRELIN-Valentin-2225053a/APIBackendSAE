@@ -20,7 +20,7 @@ class AdminController extends Controller
             if ($user->isAdmin()) {
                 return response()->json(['message'=>'Is admin'],204);
             } else {
-                return response()->json(['message'=>'Not admin'],400);
+                return response()->json(['message'=>'Not admin'],401);
             }
         } else {
             return response()->json(['message'=>'User not found'],404);
@@ -365,7 +365,7 @@ class AdminController extends Controller
             $media = Media::find($mediaID);
             if ($media) {
                 $media->delete();
-                return response()->json($media, 201);
+                return response()->json($media, 200);
             } else {
                 return response()->json(['message'=>'Media not found'],404);
             }
@@ -381,7 +381,7 @@ class AdminController extends Controller
             $user = User::find($userID);
             if ($user) {
                 $user->block();
-                return response()->json($user, 201);
+                return response()->json($user, 200);
             } else {
                 return response()->json(['message'=>'User not found'],404);
             }
@@ -395,7 +395,7 @@ class AdminController extends Controller
             $user = User::find($userID);
             if ($user) {
                 $user->unblock();
-                return response()->json($user, 201);
+                return response()->json($user, 200);
             } else {
                 return response()->json(['message'=>'User not found'],404);
             }
@@ -409,7 +409,7 @@ class AdminController extends Controller
             $user = User::find($userID);
             if ($user) {
                 $user->delete();
-                return response()->json($user, 201);
+                return response()->json($user, 200);
             } else {
                 return response()->json(['message'=>'User not found'],404);
             }
@@ -423,7 +423,7 @@ class AdminController extends Controller
             $user = User::find($userID);
             if ($user) {
                 $user->promote();
-                return response()->json($user, 201);
+                return response()->json($user, 200);
             } else {
                 return response()->json(['message'=>'User not found'],404);
             }
