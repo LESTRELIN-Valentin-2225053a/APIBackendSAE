@@ -40,7 +40,7 @@ class Investigation extends Model
 	protected $fillable = [
 		'title',
 		'description',
-        'explication',
+        'explanation',
 		'board_type'
 	];
 
