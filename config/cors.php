@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*', 'localhost:4200'],
+    'allowed_origins' => ['*', 'localhost:4200', 'sae3-a-01.alwaysdata.net'],
 
     'allowed_origins_patterns' => [],
 
