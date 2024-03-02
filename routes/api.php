@@ -104,6 +104,14 @@ Route::prefix('{userID}')->group(function (){
     });
 });
 
+Route::prefix('common')->group(function (){
+    Route::prefix('investigation')->group(function (){
+        Route::prefix('{investigationId}')->group(function () {
+                Route::get('/websites', [WebsiteController::class,'getWebsiteByInvId']);
+        });
+    });
+});
+
 Route::prefix('media')->group(function (){
     Route::controller(MediaController::class)->group(function() {
         Route::get('/all', 'getAllMedias');

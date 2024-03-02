@@ -31,7 +31,7 @@ class AuthController extends Controller
 
             Auth::login($user);
 
-            return response()->json(['user' => $user], 201);
+            return response()->json($user, 201);
         }
     }
 
