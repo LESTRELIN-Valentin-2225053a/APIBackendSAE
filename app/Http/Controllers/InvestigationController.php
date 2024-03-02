@@ -6,6 +6,7 @@ use App\Models\Completion;
 use App\Models\Investigation;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class InvestigationController extends Controller
@@ -29,26 +30,36 @@ class InvestigationController extends Controller
     }
 
     //InvestigationByUserId
-    public function getAllInvestigationsByUserId(string $userID){
-        $investigations = Investigation::query()->join('completion', 'investigations.investigation_id','=','completion.investigation_id')
-            ->where('completion.user_id',$userID)
-            ->select('investigations.*','completion.completion')
-            ->get();
-        if ($investigations->isNotEmpty())
-            return response()->json($investigations);
+    public function getAllInvestigationsForUser(){
+        if (Auth::check()) {
+            $userID = Auth::user()->getId();
+            $investigations = Investigation::query()->join('completion', 'investigations.investigation_id', '=', 'completion.investigation_id')
+                ->where('completion.user_id', $userID)
+                ->select('investigations.*', 'completion.completion')
+                ->get();
+            if ($investigations->isNotEmpty())
+                return response()->json($investigations);
+            else
+                return response()->json(['message' => 'Investigations not found'], 404);
+        }
         else
-            return response()->json(['message'=>'Investigations not found'],404);
+            return response()->json(['message' => 'User is not authentified'], 401);
     }
 
-    function getInvestigationByIdAndUserId(string $userID,string $investigationID){
-        $investigation = Investigation::query()->join('completion', 'investigations.investigation_id','=','completion.investigation_id')
-            ->where('completion.user_id',$userID)
-            ->select('investigations.*','completion.completion')
-            ->find($investigationID);
-        if ($investigation)
-            return response()->json($investigation);
+    function getInvestigationByIdForUser(string $userID,string $investigationID){
+        if (Auth::check()) {
+            $userID = Auth::user()->getId();
+            $investigation = Investigation::query()->join('completion', 'investigations.investigation_id', '=', 'completion.investigation_id')
+                ->where('completion.user_id', $userID)
+                ->select('investigations.*', 'completion.completion')
+                ->find($investigationID);
+            if ($investigation)
+                return response()->json($investigation);
+            else
+                return response()->json(['message' => 'Investigation not found'], 404);
+        }
         else
-            return response()->json(['message'=>'Investigation not found'],404);
+            return response()->json(['message' => 'User is not authentified'], 401);
     }
 
     public function updateCompletionOfUser(Request $request)

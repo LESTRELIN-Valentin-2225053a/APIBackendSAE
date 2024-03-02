@@ -53,6 +53,12 @@ class User extends Authenticatable
         'blocked'
 	];
 
+    public function getId(): int
+    {
+        return $this->user_id;
+    }
+
+
     public function isAdmin(): bool
     {
         return $this->admin;

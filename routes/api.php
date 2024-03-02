@@ -21,13 +21,6 @@ use Illuminate\Support\Facades\Route;
 
 //TODO : Add routes updateCompletionOfUser and updateMediaPositionOfUser
 
-//Route pour objet user
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-Route::get('/user/all', [UserController::class, 'getALlUsers']);
-Route::get('/user/{userID}', [UserController::class, 'getUserById']);
-
 //Routes d'authentification
 Route::controller(\App\Http\Controllers\AuthController::class)->group(function(){
     Route::post('/register', 'register')->name('register');
@@ -76,6 +69,7 @@ Route::controller(\App\Http\Controllers\AdminController::class)->group(function(
     });
 });
 
+// Route relatives aux utilisateurs non connectés
 Route::prefix('guest')->group(function (){
     Route::prefix('investigation')->group(function (){
         Route::controller(InvestigationController::class)->group(function() {
@@ -89,18 +83,24 @@ Route::prefix('guest')->group(function (){
     });
 });
 
-Route::prefix('{userID}')->group(function (){
-    Route::prefix('investigation')->group(function (){
-        Route::controller(InvestigationController::class)->group(function() {
-            Route::get('/all', 'getAllInvestigationsByUserId');
-            Route::prefix('{investigationID}')->group(function () {
-                Route::get('', 'getInvestigationByIdAndUserId');
-                Route::get('/medias', [MediaController::class,'getMediasByInvAndUserId']);
-                Route::get('/mediaLocations', [MediaLocationController::class,'getMediaLocationsByInvestigationIdAndUserId']);
-                //Route::put('/save', 'updateCompletionOfUser');
+// Route relative aux utilisateurs
+Route::prefix('user')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('', function (Request $request) { return $request->user(); });
+        Route::prefix('investigation')->group(function () {
+            Route::controller(InvestigationController::class)->group(function () {
+                Route::get('/all', 'getAllInvestigationsForUser');
+                Route::prefix('{investigationID}')->group(function () {
+                    Route::get('', 'getInvestigationByIdForUser');
+                    Route::get('/medias', [MediaController::class, 'getMediasByInvForUser']);
+                    Route::get('/mediaLocations', [MediaLocationController::class, 'getMediaLocationsByInvestigationIdForUser']);
+                    //Route::put('/save', 'updateCompletionOfUser');
+                });
             });
         });
     });
+    Route::get('/all', [UserController::class, 'getALlUsers']);
+    Route::get('/{userID}', [UserController::class, 'getUserById']);
 });
 
 Route::prefix('common')->group(function (){
