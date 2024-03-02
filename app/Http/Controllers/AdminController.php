@@ -33,7 +33,7 @@ class AdminController extends Controller
             $request->validate([
                 'title' => 'required',
                 'description' => 'required',
-                'explication' => 'required',
+                'explanation' => 'required',
                 'board_type' => 'required',
             ]);
             $investigation = Investigation::create([
@@ -53,7 +53,7 @@ class AdminController extends Controller
             $request->validate([
                 'title' => 'required',
                 'description' => 'required',
-                'explication' => 'required',
+                'explanation' => 'required',
                 'board_type' => 'required',
             ]);
             $investigation = Investigation::find($investigationID);
@@ -78,7 +78,7 @@ class AdminController extends Controller
             $investigation = Investigation::find($investigationID);
             if ($investigation) {
                 $investigation->delete();
-                return response()->json($investigation, 201);
+                return response()->json($investigation, 204);
             } else {
                 return response()->json(['message'=>'Investigation not found'],404);
             }
@@ -162,7 +162,7 @@ class AdminController extends Controller
                     'link' => $request->input('link'),
                     'icon' => $icon
                 ]);
-                return response()->json($website, 201);
+                return response()->json($website, 204);
             } else {
                 return response()->json(['message'=>'Website not found'],404);
             }
@@ -177,7 +177,7 @@ class AdminController extends Controller
             $investigation = Investigation::find($investigationID);
             if ($website && $investigation) {
                 $investigation->websites()->detach($website->id);
-                return response()->json($website, 201);
+                return response()->json($website, 204);
             } else {
                 return response()->json(['message'=>'Website or investigation not found'],404);
             }
@@ -191,7 +191,7 @@ class AdminController extends Controller
             $website = Website::find($websiteID);
             if ($website) {
                 $website->delete();
-                return response()->json($website, 201);
+                return response()->json($website, 204);
             } else {
                 return response()->json(['message'=>'Website not found'],404);
             }
@@ -298,7 +298,7 @@ class AdminController extends Controller
                     'defaultPosX' => $request->input('PosX'),
                     'defaultPosY' => $request->input('PosY')
                 ]);
-                return response()->json(['message'=>'Success'], 201);
+                return response()->json(['message'=>'Success'], 204);
             } else {
                 return response()->json(['message'=>'Media or investigation not found'],404);
             }
@@ -313,7 +313,7 @@ class AdminController extends Controller
             $investigation = Investigation::find($investigationID);
             if ($media && $investigation) {
                 $investigation->media_used_by_investigations()->where('media_id', $mediaID)->delete();
-                return response()->json(['message'=>'Success'], 201);
+                return response()->json(['message'=>'Success'], 204);
             }
             else {
                 return response()->json(['message'=>'Media not found in investigation'],404);
@@ -351,7 +351,7 @@ class AdminController extends Controller
                     'link' => $mediaLink,
                     'picture' => $picture
                 ]);
-                return response()->json($media, 201);
+                return response()->json($media, 204);
             } else {
                 return response()->json(['message'=>'Media not found'],404);
             }
