@@ -83,7 +83,6 @@ Route::prefix('guest')->group(function (){
             Route::prefix('{investigationId}')->group(function () {
                 Route::get('', 'getInvestigationById');
                 Route::get('/medias', [MediaController::class,'getMediaByInvId']);
-                Route::get('/websites', [WebsiteController::class,'getWebsiteByInvId']);
                 Route::get('/mediaLocations', [MediaLocationController::class,'getMediaLocationsByInvestigationId']);
             });
         });
