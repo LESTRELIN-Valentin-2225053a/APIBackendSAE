@@ -40,7 +40,7 @@ class AdminController extends Controller
                 'title' => $request->input('title'),
                 'description' => $request->input('description'),
                 'board_type' => $request->input('board_type'),
-                'explication' => $request->input('explication'),
+                'explanation' => $request->input('explanation'),
             ]);
             return response()->json($investigation, 201);
         } else {
@@ -62,7 +62,7 @@ class AdminController extends Controller
                     'title' => $request->input('title'),
                     'description' => $request->input('description'),
                     'board_type' => $request->input('board_type'),
-                    'explication' => $request->input('explication'),
+                    'explanation' => $request->input('explanation'),
                 ]);
                 return response()->json($investigation, 201);
             } else {
