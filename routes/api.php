@@ -47,7 +47,7 @@ Route::controller(\App\Http\Controllers\AdminController::class)->group(function(
                 Route::put('{websiteId}/link/{investigationID}', 'linkWebsiteToInvestigation');
                 Route::post('/newAndLink/{investigationID}', 'addWebsiteToInvestigation');
                 Route::delete('/delete/{websiteID}', 'deleteWebsite');
-                Route::put('/update/{websiteID}', 'updateWebsite');
+                Route::post('/update/{websiteID}', 'updateWebsite');
             });
             //Route administration Media
             Route::prefix('media')->group(function (){
@@ -55,7 +55,7 @@ Route::controller(\App\Http\Controllers\AdminController::class)->group(function(
                 Route::put('{mediaId}/link/{investigationID}', 'linkMediaToInvestigation');
                 Route::post('/newAndLink/{investigationID}', 'addMediaToInvestigation');
                 Route::delete('/delete/{mediaID}', 'deleteMedia');
-                Route::put('/update/{mediaID}', 'updateMedia');
+                Route::post('/update/{mediaID}', 'updateMedia');
             });
             //Route administration User
             Route::prefix('user')->group(function (){

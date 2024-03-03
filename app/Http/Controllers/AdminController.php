@@ -152,16 +152,23 @@ class AdminController extends Controller
             $request->validate([
                 'title' => 'required',
                 'link' => 'required',
-                'icon' => 'required',
             ]);
             $website = Website::find($websiteID);
             if ($website) {
-                $icon = MediaUploader::uploadMedia($request->file('icon')->getRealPath(), 'image');
-                $website->update([
-                    'title' => $request->input('title'),
-                    'link' => $request->input('link'),
-                    'icon' => $icon
-                ]);
+                if ($request->file('icon') != null){
+                    $icon = MediaUploader::uploadMedia($request->file('icon')->getRealPath(), 'image');
+                    $website->update([
+                        'title' => $request->input('title'),
+                        'link' => $request->input('link'),
+                        'icon' => $icon
+                    ]);
+                }
+                else {
+                    $website->update([
+                        'title' => $request->input('title'),
+                        'link' => $request->input('link'),
+                    ]);
+                }
                 return response()->json($website, 204);
             } else {
                 return response()->json(['message'=>'Website not found'],404);

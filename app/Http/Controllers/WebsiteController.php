@@ -15,7 +15,7 @@ class WebsiteController extends Controller
         if ($website->isNotEmpty())
             return response()->json($website);
         else
-            return response()->json(['message'=>'Media not found'],404);
+            return response()->json(['message'=>'Website not found'],404);
     }
 
     public function getAllWebsites(){
