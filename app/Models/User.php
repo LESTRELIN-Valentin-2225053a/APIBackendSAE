@@ -35,7 +35,9 @@ class User extends Authenticatable
 	protected $primaryKey = 'user_id';
 
 	protected $casts = [
-		'email_verified_at' => 'datetime'
+		'email_verified_at' => 'datetime',
+        'admin' => 'bool',
+        'blocked' => 'bool'
 	];
 
 	protected $hidden = [

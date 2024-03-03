@@ -43,7 +43,7 @@ class MediaController extends Controller
             $medias = Media::query()->join('user_media_position', 'media.media_id', '=', 'user_media_position.media_id')
                 ->where('user_media_position.investigation_id', $investigationID)
                 ->where('user_media_position.user_id', $userID)
-                ->select('media.*', 'user_media_position.PosX', 'user_media_position.PosY')
+                ->select('media.media_id as id','media.description','media.isTrustworthy as trustWorthy','media.type','media.link','media.picture', 'user_media_position.PosX as posX', 'user_media_position.PosY as posY')
                 ->union($mediasUsedByInvestigation)
                 ->get();
             if ($medias)
