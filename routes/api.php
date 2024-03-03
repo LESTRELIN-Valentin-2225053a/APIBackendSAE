@@ -61,7 +61,7 @@ Route::controller(\App\Http\Controllers\AdminController::class)->group(function(
             Route::prefix('user')->group(function (){
                 Route::put('/block/{userID}', 'blockUser');
                 Route::put('/unblock/{userID}', 'unblockUser');
-                Route::put('/delete/{userID}', 'deleteUser');
+                Route::delete('/delete/{userID}', 'deleteUser');
                 Route::put('/promote/{userID}', 'promoteUser');
             });
 
