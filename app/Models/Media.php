@@ -33,9 +33,9 @@ class Media extends Model
 	protected $primaryKey = 'media_id';
 	public $timestamps = false;
 
+
 	protected $casts = [
-		'isTrustWorthy' => 'bool',
-        'trustWorthy' => 'bool'
+		'isTrustworthy' => 'bool',
 	];
 
 	protected $fillable = [

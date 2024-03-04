@@ -45,17 +45,16 @@ Route::controller(\App\Http\Controllers\AdminController::class)->group(function(
             Route::prefix('website')->group(function (){
                 Route::post('/new', 'addWebsite');
                 Route::put('{websiteId}/link/{investigationID}', 'linkWebsiteToInvestigation');
-                Route::post('/newAndLink/{investigationID}', 'addWebsiteToInvestigation');
                 Route::delete('/delete/{websiteID}', 'deleteWebsite');
                 Route::post('/update/{websiteID}', 'updateWebsite');
             });
             //Route administration Media
             Route::prefix('media')->group(function (){
-                Route::post('/new', 'addMedia');
+                Route::post('/new', 'addMediaWithoutLink');
+                Route::post('/{mediaId}/addLinkFile', 'addingLinkFileToMedia');
                 Route::put('{mediaId}/link/{investigationID}', 'linkMediaToInvestigation');
-                Route::post('/newAndLink/{investigationID}', 'addMediaToInvestigation');
                 Route::delete('/delete/{mediaID}', 'deleteMedia');
-                Route::post('/update/{mediaID}', 'updateMedia');
+                Route::post('/update/{mediaID}', 'updateMediaWithoutLink');
             });
             //Route administration User
             Route::prefix('user')->group(function (){
