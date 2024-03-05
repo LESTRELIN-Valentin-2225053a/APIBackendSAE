@@ -92,8 +92,10 @@ Route::prefix('user')->group(function () {
                 Route::prefix('{investigationID}')->group(function () {
                     Route::get('', 'getInvestigationByIdForUser');
                     Route::get('/medias', [MediaController::class, 'getMediasByInvForUser']);
+                    Route::put('/medias/save', [MediaController::class, 'updateMediasForUser']);
                     Route::get('/mediaLocations', [MediaLocationController::class, 'getMediaLocationsByInvestigationIdForUser']);
-                    //Route::put('/save', 'updateCompletionOfUser');
+                    Route::put('/mediaLocations/save', [MediaLocationController::class, 'updateMediaLocationsForUser']);
+                    Route::put('/complete', 'updateCompletionOfUser');
                 });
             });
         });
