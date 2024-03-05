@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Investigation;
 use App\Models\Media;
+use App\Models\MediaLocation;
 use App\Models\MediaUsedByInvestigation;
 use App\Models\User;
 use App\Models\Website;
@@ -251,6 +252,20 @@ class AdminController extends Controller
                     'defaultPosX' => $request->input('PosX'),
                     'defaultPosY' => $request->input('PosY')
                 ]);
+                if ($investigation->board_type == 'DRAGGABLE' && $media->isTrustworthy){
+                    if ($request->input("LocationPosX") && $request->input("LocationPosY")){
+                        MediaLocation::create([
+                            'investigation_id' => $investigationID,
+                            'expected_media_id' => $mediaID,
+                            'description' => $media->description,
+                            'x' => $request->input("LocationPosX"),
+                            'y' => $request->input("LocationPosY")
+                        ]);
+                    }
+                    else {
+                        return response()->json(['message'=>'LocationPosX and LocationPosY are required'],400);
+                    }
+                }
                 return response()->json(['message'=>'Success'], 204);
             } else {
                 return response()->json(['message'=>'Media or investigation not found'],404);
@@ -266,6 +281,10 @@ class AdminController extends Controller
             $investigation = Investigation::find($investigationID);
             if ($media && $investigation) {
                 $investigation->media_used_by_investigations()->where('media_id', $mediaID)->delete();
+                if ($investigation->board_type == 'DRAGGABLE' && $media->isTrustworthy){
+                    $mediaLocation = MediaLocation::where('expected_media_id', $mediaID)->where('investigation_id', $investigationID)->first();
+                    $mediaLocation?->delete();
+                }
                 return response()->json(['message'=>'Success'], 204);
             }
             else {
