@@ -62,25 +62,21 @@ class InvestigationController extends Controller
             return response()->json(['message' => 'User is not authentified'], 401);
     }
 
-    public function updateCompletionOfUser(Request $request)
+    public function updateCompletionOfUser(string $investigationID)
     {
-        $userId = $request->input('user_id');
-        $invId = $request->input('investigation_id');
-        $completion = Completion::query()
-            ->where('user_id', $userId)
-            ->where('investigation_id', $invId)
-            ->first();
-        if (!$completion) {
-            return response()->json(['message' => 'Completion not found'], 404);
+        if (Auth::check()) {
+            $userID = Auth::user()->getId();
+            Completion::query()->updateOrInsert([
+                'user_id' => $userID,
+                'investigation_id' => $investigationID
+            ],[
+                'user_id' => $userID,
+                'investigation_id' => $investigationID,
+                'completion' => true
+            ]);
+            return response()->json(['message' => 'Completion updated']);
         }
-        else {
-            $completion = Completion::query()
-                ->where('user_id', $userId)
-                ->where('investigation_id', $invId)
-                ->update([
-                    'completion' => true
-                ]);
-            return response()->json(['message' => 'Completion updated to true']);
-        }
+        else
+            return response()->json(['message' => 'User is not authentified'], 401);
     }
 }
