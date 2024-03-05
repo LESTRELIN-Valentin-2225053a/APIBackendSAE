@@ -6,6 +6,7 @@ use App\Models\Media;
 use App\Models\UserMediaPosition;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class MediaController extends Controller
 {
@@ -14,9 +15,9 @@ class MediaController extends Controller
         $media =  Media::query()->join('media_used_by_investigation', 'media.media_id','=','media_used_by_investigation.media_id')
             ->where('media_used_by_investigation.investigation_id', $investigationID)
             ->select(
-                'media.media_id as id',
+                'media.media_id',
                 'media.description',
-                'media.isTrustWorthy',
+                'media.isTrustworthy',
                 'media.type',
                 'media.link',
                 'media.picture',
@@ -29,7 +30,7 @@ class MediaController extends Controller
             return response()->json(['message'=>'Media not found'],404);
     }
 
-        public function getMediasByInvForUser(string $investigationID){
+    public function getMediasByInvForUser(string $investigationID){
         if (Auth::check()) {
             $userID = Auth::user()->getId();
             $mediaIdsSavedByUser = UserMediaPosition::query()
@@ -38,12 +39,12 @@ class MediaController extends Controller
                 ->select('media_id');
             $mediasUsedByInvestigation = Media::query()->join('media_used_by_investigation', 'media.media_id', '=', 'media_used_by_investigation.media_id')
                 ->where('media_used_by_investigation.investigation_id', $investigationID)
-                ->select('media.*', 'media_used_by_investigation.defaultPosX as PosX', 'media_used_by_investigation.defaultPosY as PosY')
+                ->select('media.*', 'media_used_by_investigation.defaultPosX as posX', 'media_used_by_investigation.defaultPosY as posY',DB::raw('NULL as userTrustWorthy'))
                 ->whereNotIn('media.media_id', $mediaIdsSavedByUser);
             $medias = Media::query()->join('user_media_position', 'media.media_id', '=', 'user_media_position.media_id')
                 ->where('user_media_position.investigation_id', $investigationID)
                 ->where('user_media_position.user_id', $userID)
-                ->select('media.media_id as id','media.description','media.isTrustworthy','media.type','media.link','media.picture', 'user_media_position.PosX as posX', 'user_media_position.PosY as posY')
+                ->select('media.media_id','media.description','media.isTrustworthy','media.type','media.link','media.picture', 'user_media_position.posX', 'user_media_position.posY','user_media_position.userTrustWorthy')
                 ->union($mediasUsedByInvestigation)
                 ->get();
             if ($medias)
@@ -55,34 +56,31 @@ class MediaController extends Controller
             return response()->json(['message' => 'User is not authentified'], 401);
     }
 
-    public function updateMediaPositionOfUser(Request $request){
-        $userID = $request->input('user_id');
-        $invID = $request->input('investigation_id');
-        $mediaID = $request->input('media_id');
-        $PosX = $request->input('PosX');
-        $PosY = $request->input('PosY');
-        $possibleMediaPos = UserMediaPosition::query()->where('user_id', $userID)
-            ->where('investigation_id', $invID)
-            ->where('media_id', $mediaID)->first()->get();
-        if ($possibleMediaPos->isNotEmpty()){
-            UserMediaPosition::query()->where('user_id', $userID)
-                ->where('investigation_id', $invID)
-                ->where('media_id', $mediaID)->first()
-                ->update([
-                    'PosX'=> $PosX,
-                    'PosY'=> $PosY
+    public function updateMediasForUser(string $investigationID, Request $request){
+        if (Auth::check()) {
+            $userID = Auth::user()->getId();
+            foreach ($request->all() as $media){
+                $mediaID = $media['media_id'];
+                $posX = $media['posX'];
+                $posY = $media['posY'];
+                $userTrustWorthy = $media['userTrustWorthy'];
+                UserMediaPosition::query()->updateOrInsert([
+                    'user_id' => $userID,
+                    'investigation_id' => $investigationID,
+                    'media_id' => $mediaID,
+                ],[
+                    'user_id' => $userID,
+                    'investigation_id' => $investigationID,
+                    'media_id' => $mediaID,
+                    'posX' => $posX,
+                    'posY' => $posY,
+                    'userTrustWorthy' => $userTrustWorthy
                 ]);
+            }
+            return response()->json($request,200);
         }
-        else {
-            $newMediaPosUser = new UserMediaPosition();
-            $newMediaPosUser->user_id = $userID;
-            $newMediaPosUser->investigation_id = $invID;
-            $newMediaPosUser->media_id = $mediaID;
-            $newMediaPosUser->posX = $PosX;
-            $newMediaPosUser->posY = $PosY;
-            $newMediaPosUser->save();
-        }
-        return response()->json(['message'=>'Media position saved in user_media_position']);
+        else
+            return response()->json(['message' => 'User is not authentified'], 401);
     }
 
     public function getAllMedias(){

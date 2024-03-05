@@ -36,7 +36,8 @@ class Media extends Model
 
 	protected $casts = [
 		'isTrustworthy' => 'bool',
-	];
+        'userTrustWorthy' => 'bool'
+    ];
 
 	protected $fillable = [
 		'description',
