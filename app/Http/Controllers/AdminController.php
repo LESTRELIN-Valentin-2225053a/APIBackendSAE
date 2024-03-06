@@ -253,17 +253,18 @@ class AdminController extends Controller
                     'defaultPosY' => $request->input('PosY')
                 ]);
                 if ($investigation->board_type == 'DRAGGABLE' && $media->isTrustworthy){
-                    if ($request->input("LocationPosX") && $request->input("LocationPosY")){
+                    if ($request->input("LocationPosX") && $request->input("LocationPosY")
+                        && $request->input("description")){
                         MediaLocation::create([
                             'investigation_id' => $investigationID,
                             'expected_media_id' => $mediaID,
-                            'description' => $media->description,
+                            'description' => $request->input("description"),
                             'x' => $request->input("LocationPosX"),
                             'y' => $request->input("LocationPosY")
                         ]);
                     }
                     else {
-                        return response()->json(['message'=>'LocationPosX and LocationPosY are required'],400);
+                        return response()->json(['message'=>'LocationPosX, LocationPosY and description are required'],400);
                     }
                 }
                 return response()->json(['message'=>'Success'], 204);

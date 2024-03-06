@@ -52,7 +52,7 @@ Route::controller(\App\Http\Controllers\AdminController::class)->group(function(
             Route::prefix('media')->group(function (){
                 Route::post('/new', 'addMediaWithoutLink');
                 Route::post('/{mediaId}/addLinkFile', 'addingLinkFileToMedia');
-                Route::put('{mediaId}/link/{investigationID}', 'linkMediaToInvestigation');
+                Route::post('{mediaId}/link/{investigationID}', 'linkMediaToInvestigation');
                 Route::delete('/delete/{mediaID}', 'deleteMedia');
                 Route::post('/update/{mediaID}', 'updateMediaWithoutLink');
             });
